@@ -1,0 +1,94 @@
+import java.util.*; 
+class SmartRouteFinder { 
+    static class Node implements Comparable<Node> { 
+        String vertex; 
+        int distance; 
+        Node(String vertex, int distance) { 
+            this.vertex = vertex; 
+            this.distance = distance; 
+        } 
+ 
+        public int compareTo(Node other) { 
+            return this.distance - other.distance; 
+        } 
+    } 
+ 
+    public static Map<String, Integer> dijkstra(Map<String, Map<String, Integer>> graph, String 
+start) { 
+        PriorityQueue<Node> pq = new PriorityQueue<>(); 
+        Map<String, Integer> distances = new HashMap<>(); 
+ 
+        for (String vertex : graph.keySet()) { 
+            distances.put(vertex, Integer.MAX_VALUE); 
+        } 
+ 
+        distances.put(start, 0); 
+        pq.add(new Node(start, 0)); 
+ 
+        while (!pq.isEmpty()) { 
+            Node current = pq.poll(); 
+            String currentVertex = current.vertex; 
+ 
+            for (Map.Entry<String, Integer> neighbor : graph.get(currentVertex).entrySet()) { 
+                String nextVertex = neighbor.getKey(); 
+                int weight = neighbor.getValue(); 
+ 
+                int newDist = distances.get(currentVertex) + weight;
+ 
+ 
+                if (newDist < distances.get(nextVertex)) { 
+                    distances.put(nextVertex, newDist); 
+                    pq.add(new Node(nextVertex, newDist)); 
+                } 
+            } 
+        } 
+ 
+        return distances; 
+    } 
+ 
+    public static void main(String[] args) { 
+        Scanner sc = new Scanner(System.in); 
+        Map<String, Map<String, Integer>> graph = new HashMap<>(); 
+ 
+        System.out.println("===== SMART ROUTE FINDER ====="); 
+ 
+        System.out.print("Enter number of vertices: "); 
+        int n = sc.nextInt(); 
+        sc.nextLine(); 
+ 
+        System.out.println("Enter vertex names (Example: A B C D):"); 
+        for (int i = 0; i < n; i++) { 
+            String vertex = sc.nextLine(); 
+            graph.put(vertex, new HashMap<>()); 
+        } 
+ 
+        System.out.print("Enter number of edges: "); 
+        int e = sc.nextInt(); 
+ 
+        System.out.println("Enter edges in this format: source destination weight"); 
+        System.out.println("Example: A B 4"); 
+ 
+        for (int i = 0; i < e; i++) { 
+            String source = sc.next(); 
+            String dest = sc.next(); 
+            int weight = sc.nextInt(); 
+ 
+            graph.get(source).put(dest, weight); 
+            graph.get(dest).put(source, weight); 
+        } 
+ 
+        System.out.print("Enter starting node: "); 
+        String start = sc.next(); 
+ 
+        Map<String, Integer> result = dijkstra(graph, start); 
+
+ 
+ 
+        System.out.println("\nShortest distances:"); 
+        for (String node : result.keySet()) { 
+            System.out.println(node + " : " + result.get(node)); 
+        } 
+ 
+        sc.close(); 
+    } 
+} 
